@@ -3,18 +3,20 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(ardupilot_sitl_gazebo)
 
-
+ add_compile_options(-std=c++11)
 #######################
 ## Find Dependencies ##
 #######################
-
+find_package(catkin REQUIRED)
 find_package(gazebo REQUIRED)
+find_package(SDFormat 6 REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 if("${GAZEBO_VERSION}" VERSION_LESS "7.0")
     message(FATAL_ERROR "You need at least Gazebo 7.0. Your version: ${GAZEBO_VERSION}")
 else()
     message("Gazebo version: ${GAZEBO_VERSION}")
+    
 endif()
 
 ###########

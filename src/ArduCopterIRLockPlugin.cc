@@ -61,13 +61,17 @@ namespace gazebo
   /// \param[in] _default_value Default value, if the parameter not available.
   /// \param[in] _verbose If true, gzerror if the parameter is not available.
   /// \return True if the parameter was found in _sdf, false otherwise.
-  template<class T>
+  template<typename T>
   bool getSdfParam(sdf::ElementPtr _sdf, const std::string &_name,
     T &_param, const T &_defaultValue, const bool &_verbose = false)
   {
     if (_sdf->HasElement(_name))
     {
+#if GAZEBO_MAJOR_VERSION < 9
       _param = _sdf->GetElement(_name)->Get<T>();
+#else
+      _sdf->Get<T>(_name, _param);
+#endif
       return true;
     }
 
@@ -195,8 +199,10 @@ void ArduCopterIRLockPlugin::Load(sensors::SensorPtr _sensor,
   }
   getSdfParam<std::string>(_sdf, "irlock_addr",
       this->dataPtr->irlock_addr, "127.0.0.1");
-  getSdfParam<uint16_t>(_sdf, "irlock_port",
-      this->dataPtr->irlock_port, 9005);
+  getSdfParam<uint16_t>(_sdf,
+		  "irlock_port",
+      this->dataPtr->irlock_port,
+	  9005);
 
   this->dataPtr->parentSensor->SetActive(true);
 
@@ -232,10 +238,13 @@ void ArduCopterIRLockPlugin::OnNewFrame(const unsigned char * /*_image*/,
 
     if (!camera->IsVisible(vis))
       continue;
-
+#if GAZEBO_MAJOR_VERSION < 9
     ignition::math::Vector2i pt = GetScreenSpaceCoords(
         vis->GetWorldPose().pos.Ign(), camera);
-
+#else
+    ignition::math::Vector2i pt = GetScreenSpaceCoords(
+            vis->WorldPose().Pos(), camera);
+#endif
     // use selection buffer to check if visual is occluded by other entities
     // in the camera view
     Ogre::Entity *entity =
@@ -259,7 +268,11 @@ void ArduCopterIRLockPlugin::OnNewFrame(const unsigned char * /*_image*/,
 
     if (result && result->GetRootVisual() == vis)
     {
+#if GAZEBO_MAJOR_VERSION < 9
       this->Publish(vis->GetName(), pt.X(), pt.Y());
+#else
+      this->Publish(vis->Name(), pt.X(), pt.Y());
+#endif
     }
   }
 }
