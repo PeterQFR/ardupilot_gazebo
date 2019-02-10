@@ -3,11 +3,14 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(ardupilot_sitl_gazebo)
 
-
+add_compile_options(-std=c++11)
 #######################
 ## Find Dependencies ##
 #######################
-
+find_package(catkin REQUIRED
+roscpp
+rospy
+)
 find_package(gazebo REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
@@ -25,16 +28,17 @@ include_directories(
         ${PROJECT_SOURCE_DIR}
         include
         ${GAZEBO_INCLUDE_DIRS}
+        ${catkin_INCLUDE_DIRS}
         )
 
-link_libraries(
-        ${CMAKE_CURRENT_BINARY_DIR}
-        ${GAZEBO_LIBRARIES}
-        )
+#link_libraries(
+#        ${CMAKE_CURRENT_BINARY_DIR}
+#        ${GAZEBO_LIBRARIES}
+#        )
 
-link_directories(
-        ${GAZEBO_LIBRARY_DIRS}
-        )
+#link_directories(
+#        ${GAZEBO_LIBRARY_DIRS}
+#        )
 
 set (plugins_single_header
         ArduPilotPlugin
@@ -52,6 +56,16 @@ target_link_libraries(ArduPilotPlugin ${GAZEBO_LIBRARIES})
 
 add_library(ArduCopterPlugin SHARED src/ArduCopterPlugin.cc)
 target_link_libraries(ArduCopterPlugin ${GAZEBO_LIBRARIES})
+
+add_executable(test_node
+ src/test/test.cpp
+ 
+ )
+target_link_libraries(test_node 
+ ArduCopterPlugin 
+ ${catkin_LIBRARIES}
+ ${GAZEBO_LIBRARIES}
+ )
 
 if("${GAZEBO_VERSION}" VERSION_LESS "8.0")
     add_library(GimbalSmall2dPlugin SHARED src/GimbalSmall2dPlugin.cc)
