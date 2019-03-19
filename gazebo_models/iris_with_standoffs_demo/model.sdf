@@ -1,5 +1,5 @@
 <?xml version='1.0'?>
-<sdf version="1.6" xmlns:xacro='http://ros.org/wiki/xacro'>
+<sdf version="1.6" >
   <model name="iris_demo">
     <include>
       <uri>model://iris_with_standoffs</uri>
@@ -32,6 +32,7 @@
       <visualize>false</visualize>
     </sensor>
   </link>
+<<<<<<< Updated upstream:gazebo_models/iris_with_standoffs_demo/model.sdf
     <joint name="camera_mount" type="fixed">
       <child>cam_link</child>
       <parent>iris::base_link</parent>
@@ -43,6 +44,20 @@
         </limit>
       </axis>
     </joint>
+=======
+
+  <joint name="camera_mount" type="fixed">
+    <child>cam_link</child>
+    <parent>iris::base_link</parent>
+    <axis>
+      <xyz>0 0 1</xyz>
+      <limit>
+        <upper>0</upper>
+        <lower>0</lower>
+      </limit>
+    </axis>
+  </joint-->
+>>>>>>> Stashed changes:models/iris_with_standoffs_demo/model.sdf
     <!-- visual markers for debugging
     <link name="rotor_0_blade_1_cp">
       <gravity>0</gravity>
